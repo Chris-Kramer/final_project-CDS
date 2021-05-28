@@ -1,5 +1,5 @@
-## Metadata
-write some information about the data:  
-* When it was aquired  
-* When it was created  
-* etc.  
+## Processed_data  
+This file is the output for processed data
+
+## Raw_data  
+The unprocessed data
