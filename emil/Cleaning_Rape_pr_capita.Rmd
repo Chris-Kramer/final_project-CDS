@@ -1,0 +1,97 @@
+---
+title: "Cleaning_Rape_pr_capita"
+author: "Emil Buus Thomsen"
+date: "29/5/2021"
+output: html_document
+---
+
+#Calculate factor for rape pr. capita
+
+
+## Loading packages
+```{r setup, include=FALSE}
+library(tidyverse)
+
+    ```
+
+## Loading Data
+
+```{r data}
+popolation_link <- "https://raw.githubusercontent.com/Chris-Kramer/final_project-CDS/main/data/raw_data/pop.csv"
+charged_rape_link <- "https://raw.githubusercontent.com/Chris-Kramer/final_project-CDS/main/data/raw_data/charged_rape.csv"
+reported_rape_link <- "https://raw.githubusercontent.com/Chris-Kramer/final_project-CDS/main/data/raw_data/reported_rape.csv"
+
+
+population <- read_csv2(url(popolation_link))
+charged_rape <- read_csv2(url(charged_rape_link))
+reported_rape <- read_csv2(url(reported_rape_link))
+```
+```{r}
+#Removing the two last columns of the
+population <- population[1:99, ]
+length(population$kommune)
+
+```
+
+
+## Cleaning reported_rape
+
+```{r}
+#Creating empty list to contain the values that should be kept in df's
+match_list <- rep()
+
+#runnning through all municipalities in the population data frame.
+for (mun in population$kommune) {
+  
+  #Returning a list where the number of of the index in population and reported_rape are the same.
+  match_list <- c(match_list, match(mun, reported_rape$kommune))
+  
+}
+
+#Ceeping only the values mathing the indeices of the mathch list.
+rep_rape <- reported_rape[match_list, ]
+
+#Dropping na rows
+rep_rape <- na.omit(rep_rape)
+
+#dropping duplicates
+rep_rape <- rep_rape %>% distinct()
+
+length(rep_rape$kommune)
+
+```
+
+
+## Cleaning charged_rape
+
+```{r}
+
+# Resetting match list to be empty again
+match_list <- rep()
+
+#runnning through all municipalities in the population data frame.
+for (mun in population$kommune) {
+  
+  #Returning a list where the number of of the index in population and charged_rape are the same.
+  match_list <- c(match_list, match(mun, charged_rape$kommune))
+  
+}
+
+#Ceeping only the values mathing the indeices of the mathch list.
+char_rape <- charged_rape[match_list, ]
+
+#Dropping na rows
+char_rape <- na.omit(char_rape)
+
+#dropping duplicates
+char_rape <- char_rape %>% distinct()
+
+length(char_rape$kommune)
+```
+
+
+
+
+
+
+
