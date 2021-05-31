@@ -1,0 +1,65 @@
+---
+title: "cleaning_area_data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Cleaning the data 
+First we loaded the datasets into openrefine to clean and split the columns. Now that they match we still have to note that we have data from 2007-2021 in the area dataset of square kilometeres for municipalities while we only have 2010-2020 in the population dataset. 
+
+```{r load data}
+area_data <- read.csv("../data/clean_area-sqkm.csv")
+pop_data  <- read.csv("../data/clean_pop1.csv")
+
+```
+When looking at the data we can see that we need to remove some rows from area_data as the length is 106 and 99 on population. In the csv file we see that the last lines are information that got mixed in the dataset and therefore is irrelevant. 
+
+```{r pressure, echo=FALSE}
+length(area_data$Kommune)
+length(pop_data$Kommune)
+
+area_data <- area_data[-c(100:106), ]
+```
+
+After this we remove the columns from 2007-2009 and 2021 from area
+
+```{r}
+area_data$X2007 = NULL 
+area_data$X2008 = NULL 
+area_data$X2009 = NULL 
+area_data$X2021 = NULL 
+
+```
+
+Then we just need to divide the numbers from each columns as that will give us the density of population pr. km2 
+So we divide the population with area
+```{r}
+library(dplyr)
+pop_sqm <- merge(pop_data, area_data, by = "Kommune")
+#Fix the missing values in Christianø
+pop_sqm[pop_sqm == ".."] <- 0
+
+  
+pop_sqm <- pop_sqm %>% 
+  mutate(people_pr_sqm2010 = as.integer(X2010.x) / as.integer(X2010.y)) %>% 
+  mutate(people_pr_sqm2011 = as.integer(X2011.x) / as.integer(X2011.y),
+         people_pr_sqm2012 = as.integer(X2012.x) / as.integer(X2012.y),
+         people_pr_sqm2013 = as.integer(X2013.x) / as.integer(X2013.y),
+         people_pr_sqm2014 = as.integer(X2014.x) / as.integer(X2014.y),
+         people_pr_sqm2015 = as.integer(X2015.x) / as.integer(X2015.y),
+         people_pr_sqm2016 = as.integer(X2016.x) / as.integer(X2016.y),
+         people_pr_sqm2017 = as.integer(X2017.x) / as.integer(X2017.y),
+         people_pr_sqm2018 = as.integer(X2018.x) / as.integer(X2018.y),
+         people_pr_sqm2019 = as.integer(X2019.x) / as.integer(X2019.y),
+         people_pr_sqm2020 = as.integer(X2020.x) / as.integer(X2020.y),)
+  
+pop_sqm[2:23] = NULL 
+pop_sqm
+
+write.csv(pop_sqm, "../data/pop_sqm.csv")
+         
+```
+Then we just need to find the median for the municipalities and consider deleting Christiansø as the data was insufficient
