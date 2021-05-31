@@ -1,0 +1,56 @@
+---
+title: "bar_map"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#Read the municipalities polygons
+municipalities <- readRDS("../data/gadm36_DNK_2_sp.rds")
+#Read municipalities as a spatial object
+municipalities <- st_as_sf(municipalities)
+#Give municipaliteis a CRS
+municipalities <- st_transform(municipalities, crs = 4326)
+
+#Clean names
+municipalities$NAME_2[31] <- "Aarhus"
+municipalities$NAME_2[21] <- "Høje-Taastrup"
+municipalities$NAME_2[60] <- "Vesthimmerlands"
+
+bars <- read_csv("../data/bars_coords.csv")
+bars
+```
+
+
+```{r}
+coordinates_bars <- st_as_sf(x= coordinates_bars,
+                             coords = c("lon", "lat"),
+                             crs = 4326)
+
+plot(coordinates_bars)
+```
+```{r}
+library(spatstat)
+
+municipalities$pt_count <- lengths(st_intersects(municipalities$geometry, coordinates_bars))
+
+municipalities
+
+coordinates_bars
+```
+
+
+```{r}
+library(tmap)
+#Plot rapes in 2017 as a 
+tmap_mode(mode = "view")
+
+tm_shape(municipalities) +
+ tm_polygons("pt_count", style = "jenks",
+             id = "NAME_2",
+             title = "Bars in DK")
+```
+
