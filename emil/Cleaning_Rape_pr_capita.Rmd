@@ -29,6 +29,10 @@ reported_rape <- read_csv2(url(reported_rape_link))
 ```{r}
 #Removing the two last columns of the
 population <- population[1:99, ]
+reported_rape <- subset(reported_rape, select = -c(`2007`,`2008`, `2009`))
+charged_rape <- subset(charged_rape, select = -c(`2007`,`2008`, `2009`))
+
+
 length(population$kommune)
 
 ```
@@ -57,8 +61,47 @@ rep_rape <- na.omit(rep_rape)
 #dropping duplicates
 rep_rape <- rep_rape %>% distinct()
 
-length(rep_rape$kommune)
 
+
+
+#Adding a column for the whole country 
+
+#Calculating the sum of reported rapes in our data frame
+total_rep <- colSums(rep_rape[,2:12])
+
+#Adding a name to total reported rapes
+total_rep <- prepend(total_rep, "total_reported_rapes")
+
+
+
+#rbinding total_reported_rapes to our charged rape dataframe.
+rep_rape <- rbind(rep_rape, total_rep)
+
+###
+###
+###
+#rep_rape <- rep_rape %>% mutate(as.character(kommune), as.integer(`2010`, `2011`, `2012`, `2013`, `2014`, `2015`, `2016`, `2017`, `2018`, `2019`, `2020`))
+#rep_rape <- rep_rape[,1:12]
+
+
+rep_rape <- transform(rep_rape,     kommune = as.character(kommune),
+                                    `2010` = as.numeric(`2010`),
+                                    `2011` = as.numeric(`2011`),
+                                    `2012` = as.numeric(`2012`),
+                                    `2013` = as.numeric(`2013`),
+                                    `2014` = as.numeric(`2014`),
+                                    `2015` = as.numeric(`2015`),
+                                    `2016` = as.numeric(`2016`),
+                                    `2017` = as.numeric(`2017`),
+                                    `2018` = as.numeric(`2018`),
+                                    `2019` = as.numeric(`2019`),
+                                    `2020` = as.numeric(`2020`)
+                                    )
+
+
+###
+###
+###
 ```
 
 
@@ -86,24 +129,131 @@ char_rape <- na.omit(char_rape)
 #dropping duplicates
 char_rape <- char_rape %>% distinct()
 
-length(char_rape$kommune)
+
+#Adding a column for the whole country 
+
+#Creating calculating the sum of charged rapes in our data frame
+total_char <- colSums(char_rape[,2:12])
+
+#Adding a name to total charged rapes
+total_char <- prepend(total_char, "total_charged_rapes")
+
+#rbinding total_charged_rapes to our charged rape dataframe.
+char_rape <- rbind(char_rape, total_char)
+
+###
+###
+###
+#char_rape <- char_rape %>% mutate(as.character(kommune), as.integer(`2010`, `2011`, `2012`, `2013`, `2014`, `2015`, `2016`, `2017`, `2018`, `2019`, `2020`))
+#char_rape <- char_rape[,1:12]
+
+
+char_rape <- transform(char_rape,   kommune = as.character(kommune),
+                                    `2010` = as.numeric(`2010`),
+                                    `2011` = as.numeric(`2011`),
+                                    `2012` = as.numeric(`2012`),
+                                    `2013` = as.numeric(`2013`),
+                                    `2014` = as.numeric(`2014`),
+                                    `2015` = as.numeric(`2015`),
+                                    `2016` = as.numeric(`2016`),
+                                    `2017` = as.numeric(`2017`),
+                                    `2018` = as.numeric(`2018`),
+                                    `2019` = as.numeric(`2019`),
+                                    `2020` = as.numeric(`2020`)
+                                    )
+
+
+###
+###
+###
+
 ```
 
 
+
+
+###################################
+###################################
+###################################
+###################################
+###################################
+###################################
+
+
+
+
+
+
+
+
+
 ```{r}
-rep_rape <- subset(rep_rape, select = -c(`2007`,`2008`, `2009`))
-char_rape <- subset(char_rape, select = -c(`2007`,`2008`, `2009`))
+#rep_rape <- subset(rep_rape, select = -c(`2007`,`2008`, `2009`))
+#char_rape <- subset(char_rape, select = -c(`2007`,`2008`, `2009`))
 ###################################################
 length(char_rape)
 
+###
+###
+###
+#population <- population %>% mutate(as.character(kommune), as.integer(`2010`, `2011`, `2012`, `2013`, `2014`, `2015`, `2016`, `2017`, `2018`, `2019`, `2020`))
+#population <- population[,1:12]
+###
+###
+###
+
+#Adding a column for the whole country 
+
+#Creating calculating the sum of the population in our population data frame
+total_popu <- colSums(population[,2:12])
+
+#Adding a name to the the total population
+total_popu <- prepend(total_popu, "total_population")
+
+#rbinding total_popu to our population dataframe.
+population <- rbind(population, total_popu)
+
+
+
+###
+###
+###
+
+population <- transform(population, kommune = as.character(kommune),
+                                    `2010` = as.numeric(`2010`),
+                                    `2011` = as.numeric(`2011`),
+                                    `2012` = as.numeric(`2012`),
+                                    `2013` = as.numeric(`2013`),
+                                    `2014` = as.numeric(`2014`),
+                                    `2015` = as.numeric(`2015`),
+                                    `2016` = as.numeric(`2016`),
+                                    `2017` = as.numeric(`2017`),
+                                    `2018` = as.numeric(`2018`),
+                                    `2019` = as.numeric(`2019`),
+                                    `2020` = as.numeric(`2020`)
+                                    )
+
+#population <- population %>% type.convert(as.character(kommune), as.integer(`2010`, `2011`, `2012`, `2013`, `2014`, `2015`, `2016`, `2017`, `2018`, `2019`, `2020`))
+#population <- population[,1:12]
+###
+###
+###
+
+
+
+class(rep_rape[,2:12])
+
 # Deviding the rapes by population and multiplies by 10000 to get a factor of rape per person. In order to do this we are dropping the municipality column
-charged_popu <- (char_rape[,2:12]/population[,2:12])*10000
-reported_popu <- (rep_rape[,2:12]/population[,2:12])*10000
+charged_popu <- char_rape[,2:12]/population[,2:12]*10000
+reported_popu <- rep_rape[,2:12]/population[,2:12]*10000
 
 
 # Adding the municipality column again.
 charged_popu <- cbind(Municipalities=c(char_rape[,1]), charged_popu)
 reported_popu <- cbind(Municipalities=c(rep_rape[,1]), reported_popu)
+
+
+
 ```
 
 
