@@ -90,8 +90,37 @@ length(char_rape$kommune)
 ```
 
 
+```{r}
+rep_rape <- subset(rep_rape, select = -c(`2007`,`2008`, `2009`))
+char_rape <- subset(char_rape, select = -c(`2007`,`2008`, `2009`))
+###################################################
+length(char_rape)
+
+# Deviding the rapes by population and multiplies by 100 to get a factor of rape per person in procent. In order to du this we are dropping the municipality column
+charged_popu <- char_rape[,2:12]/population[,2:12]*100
+reported_popu <- rep_rape[,2:12]/population[,2:12]*100
 
 
+# Adding the municipality column again.
+charged_popu <- cbind(Municipalities=c(char_rape[,1]), charged_popu)
+reported_popu <- cbind(Municipalities=c(rep_rape[,1]), reported_popu)
+```
+
+
+```{r}
+charged_reported_rape <- char_rape[,2:12]-rep_rape[,2:12]
+
+charged_reported_rape <- cbind(Municipalities=c(char_rape[,1]),charged_reported_rape)
+
+```
+
+
+```{r}
+write.csv(charged_popu, "charged_population.csv", row.names = FALSE)
+write.csv(reported_popu, "reported_popu.csv", row.names = FALSE)
+
+
+```
 
 
 
