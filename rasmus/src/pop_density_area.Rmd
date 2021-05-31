@@ -60,8 +60,7 @@ pop_sqm <- pop_sqm %>%
 pop_sqm[2:23] = NULL 
 # We remove the row with Christiansø as there is not enough data for this to work
 pop_sqm <- pop_sqm[-c(13), ]
-# Creating a csv file 
-write.csv(pop_sqm, "../data/pop_sqm.csv")
+
          
 ```
 Then we just need to find the median for the municipalities 
@@ -73,6 +72,8 @@ pop_sqm <- pop_sqm %>%
 # Reset the index after removing Christiansø (row 13)
 row.names(pop_sqm) <- NULL
 
+# Creating a csv file 
+write.csv(pop_sqm, "../data/pop_sqm.csv")
 # Finding the average for each municipalities
 
 ```
