@@ -40,11 +40,20 @@ municipalities <- st_transform(municipalities, crs = 4326)
 ```
 
 ```{r}
-tmap_mode(mode = "view")
-tm_shape(municipalities) +
+municipalities %>% filter(Kommune == "Esbjerg") %>% select(Kommune)
+
+pop_avg_density %>% filter(Kommune == "Esbjerg")
+```
+
+
+```{r}
+#tmap_mode(mode = "view")
+density_map <- tm_shape(municipalities) +
  tm_polygons("people_pr_sqm_avg", style = "quantile",
              id = "Kommune",
-             title = "Average people pr. sqkm, from 2010-2020")
+             title = "Average people pr. sqkm from 2010-2020")
+
+tmap_save(density_map, "../output/density_map.html")
 
 ```
 
