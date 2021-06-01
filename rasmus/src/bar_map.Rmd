@@ -62,16 +62,23 @@ municipalities_and_bars <- municipalities_and_bars %>%
   rename(Municipality = NAME_2,
          Bars = pt_count
          )
+municipalities_and_bars <- municipalities_and_bars[order(municipalities_and_bars$Municipality),]
 
 #The dataframe now only consists of Municipalities and the bar count
 length(municipalities_and_bars$Municipality)
-```
 
-```{r}
-getwd()
+
+
+
+
+#Reading population data
 population <- read.csv("../../data/processed_data/clean_population.csv", encoding = "UTF-16")
+population <- population %>% 
+  rename(Municipality = kommune)
+population <- population[order(population$Municipality),]
 
-
+tail(population)
+tail(municipalities_and_bars)
 
 ```
 
