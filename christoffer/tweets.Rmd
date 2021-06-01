@@ -1,0 +1,45 @@
+---
+title: "Untitled"
+author: "Christoffer Kramer"
+date: "31/5/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(rtweet)
+library(tidyverse)
+library(tidytext)
+library(httr)
+library(jsonlite)
+```
+
+
+```{r cars}
+tweets <- search_tweets(q = "#metoo",
+                        n = 1000,
+                        include_rts = FALSE,
+                        `-filter`= "replies",
+                        lang = "da")
+```
+
+```{r}
+tweets
+```
+
+```{r}
+for (i in 1:nrow(tweets)) {
+print(tweets$geo_coords[[i]])
+}
+```
+```{r}
+tweets$place_full_name
+```
+
+```{r}
+locations <- tweets %>% 
+  filter(!is.na(place_full_name)) %>% 
+  count(place_full_name, sort = TRUE)
+
+locations
+```
+

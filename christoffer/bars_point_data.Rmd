@@ -13,7 +13,7 @@ library(sf)
 ```
 
 ```{r}
-df_bars <- read_csv2("../data/raw_data/CVR-bars.csv")
+df_bars <- read_csv("../data/raw_data/CVR-bars.csv")
 ```
 
 ```{r}
@@ -41,11 +41,10 @@ for(i in 1:nrow(df_bars)) {
 
 
 ```{r}
-
 #Create dataframe with longitudes and lattitudes
 df <- data.frame(lat = lats,
                  lon = lons)
 
-write_csv(df, "../data/processed_data/bars_coords.csv")
+write.csv(df, "../data/processed_data/bars_coords.csv", fileEncoding = "UTF-8")
 ```
 

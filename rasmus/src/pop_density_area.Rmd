@@ -61,7 +61,8 @@ pop_sqm[2:23] = NULL
 # We remove the row with Christiansø as there is not enough data for this to work
 pop_sqm <- pop_sqm[-c(13), ]
 
-         
+# Create a column with the average density across all years 
+pop_sqm$people_pr_sqm_avg <- as.integer(rowMeans(pop_sqm[3:ncol(pop_sqm)]))
 ```
 Then we just need to find the median for the municipalities 
 
