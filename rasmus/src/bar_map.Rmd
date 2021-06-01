@@ -5,6 +5,9 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(spatstat)
+library(sf)
 ```
 
 ```{r}
@@ -26,12 +29,16 @@ bars
 
 
 ```{r}
-coordinates_bars <- st_as_sf(x= coordinates_bars,
+coordinates_bars <- st_as_sf(x= bars,
                              coords = c("lon", "lat"),
                              crs = 4326)
 
 plot(coordinates_bars)
 ```
+
+
+
+
 ```{r}
 library(spatstat)
 

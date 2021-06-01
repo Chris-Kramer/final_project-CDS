@@ -266,9 +266,9 @@ charged_reported_rape <- cbind(Municipalities=c(char_rape[,1]),charged_reported_
 
 
 ```{r}
-write.csv(charged_popu, "charged_population.csv", row.names = FALSE)
-write.csv(reported_popu, "reported_popu.csv", row.names = FALSE)
-write.csv(charged_reported_rape, "charged_reported_rape.csv", row.names = FALSE)
+write.csv(charged_popu, "../data/processed_data/EMIL_charged_population.csv", row.names = FALSE)
+write.csv(reported_popu, "../data/processed_data/EMIL_reported_popu.csv", row.names = FALSE)
+write.csv(charged_reported_rape, "../data/processed_data/EMIL_charged_reported_rape.csv", row.names = FALSE)
 
 ```
 
