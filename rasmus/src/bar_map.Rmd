@@ -62,17 +62,35 @@ municipalities_and_bars <- municipalities_and_bars %>%
   rename(Municipality = NAME_2,
          Bars = pt_count
          )
+municipalities_and_bars <- municipalities_and_bars[order(municipalities_and_bars$Municipality),]
+
+#Resetting index
+row.names(municipalities_and_bars) <- NULL
 
 #The dataframe now only consists of Municipalities and the bar count
-length(municipalities_and_bars$Municipality)
+municipalities_and_bars$Municipality
 ```
 
+
+
 ```{r}
-getwd()
 population <- read.csv("../../data/processed_data/clean_population.csv", encoding = "UTF-16")
 
+population <- population %>% 
+  rename(Municipality = kommune)
+population
 
+population <- population[order(population$Municipality),]
 
+#Resetting index
+row.names(population) <- NULL
+
+population
+
+population$avg_popu <- as.integer(rowMeans(population[2:ncol(population)]))
+
+municipalities_and_bars$Bar_pr_person <- municipalities_and_bars$Bars/population$avg_popu[1:99]*10000
+municipalities_and_bars
 ```
 
 
