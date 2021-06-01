@@ -44,10 +44,38 @@ library(spatstat)
 
 municipalities$pt_count <- lengths(st_intersects(municipalities$geometry, coordinates_bars))
 
-municipalities
+municipalities$pt_count
 
 coordinates_bars
 ```
+
+Creating a smaller data frame from municipalities data frame
+
+```{r}
+#Transforming the municipalities from an sf data frame to a normal
+municipalities_and_bars <- data.frame(municipalities)
+#selecting only NAME_2 and pt_count
+municipalities_and_bars <- subset(municipalities_and_bars, select = c(NAME_2, pt_count))
+
+#Renaming columns
+municipalities_and_bars <- municipalities_and_bars %>% 
+  rename(Municipality = NAME_2,
+         Bars = pt_count
+         )
+
+#The dataframe now only consists of Municipalities and the bar count
+length(municipalities_and_bars$Municipality)
+```
+
+```{r}
+getwd()
+population <- read.csv("../../data/processed_data/clean_population.csv", encoding = "UTF-16")
+
+
+
+```
+
+
 
 
 ```{r}

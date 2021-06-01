@@ -232,12 +232,8 @@ population <- transform(population, kommune = as.character(kommune),
                                     `2019` = as.numeric(`2019`),
                                     `2020` = as.numeric(`2020`)
                                     )
+write.csv(population, "../data/processed_data/clean_population.csv", row.names = FALSE)
 
-#population <- population %>% type.convert(as.character(kommune), as.integer(`2010`, `2011`, `2012`, `2013`, `2014`, `2015`, `2016`, `2017`, `2018`, `2019`, `2020`))
-#population <- population[,1:12]
-###
-###
-###
 
 
 
