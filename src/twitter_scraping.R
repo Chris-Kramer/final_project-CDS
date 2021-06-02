@@ -31,18 +31,22 @@ tweets <- search_fullarchive(q = "#metoo place_country:DK", # Get tweets with th
                              token = mytoken)
 
 
-# Clean and save file ---------------------------------------------------------------
+# Clean data ---------------------------------------------------------------
 tweets <- tweets %>% select(created_at, bbox_coords, place_name, place_full_name, place_type)
 # Remove place with fitness world (This can't be converted to a geocode)
 tweets <- tweets %>% filter(place_full_name != "Fitness World")
+# Remove 'Kursus- og konferencecenter Metalskolen', since this can't be converted to geocode
+tweets <- tweets %>% filter(place_full_name != "Kursus- og konferencecenter Metalskolen")
 
+
+# Get geocodes ------------------------------------------------------------
 #List of longitudes
 lons <- c()
 #List of latitudes
 lats <- c()
 # Loop through every city and zip code of bars
 for(i in 1:nrow(tweets)) {
-    print(tweets$place_full_name[i])
+  print(tweets$place_full_name[i])
   # Get results from the query of geocoding
   result <- geocode_OSM(q = tweets$place_full_name[i], projection = 4326)
   # Get the coordinates from the results as a vector
@@ -56,6 +60,8 @@ for(i in 1:nrow(tweets)) {
   lats <- append(lats, lat)
 }
 
+
+# Save rds file -----------------------------------------------------------
 # Add columns of latitude and longitude to dataframe 
 tweets$latitude <- lats
 tweets$longitude <- lons
