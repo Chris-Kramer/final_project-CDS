@@ -11,10 +11,17 @@ knitr::opts_chunk$set(echo = TRUE)
 First we loaded the datasets into openrefine to clean and split the columns. Now that they match we still have to note that we have data from 2007-2021 in the area dataset of square kilometeres for municipalities while we only have 2010-2020 in the population dataset. 
 
 ```{r load data}
-area_data <- read.csv("../data/clean_area-sqkm.csv")
-pop_data  <- read.csv("../data/clean_pop1.csv")
+area_data <- read.csv("../data/clean_area-sqkm.csv", encoding = "UTF-8")
+pop_data  <- read.csv("../data/clean_pop1.csv", encoding = "UTF-8")
 
 ```
+
+```{r}
+pop_data %>% filter(Kommune == "Esbjerg")
+
+
+```
+
 When looking at the data we can see that we need to remove some rows from area_data as the length is 106 and 99 on population. In the csv file we see that the last lines are information that got mixed in the dataset and therefore is irrelevant. 
 
 ```{r pressure, echo=FALSE}
@@ -39,6 +46,8 @@ So we divide the population with area
 ```{r}
 library(dplyr)
 pop_sqm <- merge(pop_data, area_data, by = "Kommune")
+
+pop_sqm %>% filter(Kommune == "Esbjerg")
 #Fix the missing values in Christianø
 pop_sqm[pop_sqm == ".."] <- 0
 
@@ -56,13 +65,17 @@ pop_sqm <- pop_sqm %>%
          people_pr_sqm2019 = as.integer(X2019.x) / as.integer(X2019.y),
          people_pr_sqm2020 = as.integer(X2020.x) / as.integer(X2020.y),)
 
+pop_sqm %>% filter(Kommune == "Esbjerg")
 # We delete the columns from the area and pop files we merged to the dataframe that we no longer need. 
 pop_sqm[2:23] = NULL 
-# We remove the row with Christiansø as there is not enough data for this to work
-pop_sqm <- pop_sqm[-c(13), ]
 
+pop_sqm %>% filter(Kommune == "Christiansø")
+# We remove the row with Christiansø as there is not enough data for this to work
+pop_sqm <- pop_sqm %>% filter(Kommune != "Christiansø")
+pop_sqm %>% filter(Kommune == "København")
 # Create a column with the average density across all years 
 pop_sqm$people_pr_sqm_avg <- as.integer(rowMeans(pop_sqm[3:ncol(pop_sqm)]))
+pop_sqm %>% filter(Kommune == "Esbjerg")
 ```
 Then we just need to find the median for the municipalities 
 
@@ -73,8 +86,10 @@ pop_sqm <- pop_sqm %>%
 # Reset the index after removing Christiansø (row 13)
 row.names(pop_sqm) <- NULL
 
+pop_sqm %>% filter(Kommune == "Esbjerg")
+
 # Creating a csv file 
-write.csv(pop_sqm, "../data/pop_sqm.csv")
+write.csv(pop_sqm, "../data/pop_sqm.csv", fileEncoding = "UTF-8")
 # Finding the average for each municipalities
 
 ```

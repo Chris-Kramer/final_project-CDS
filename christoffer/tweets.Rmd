@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Tweets"
 author: "Christoffer Kramer"
 date: "31/5/2021"
 output: html_document
@@ -14,32 +14,31 @@ library(jsonlite)
 ```
 
 
-```{r cars}
-tweets <- search_tweets(q = "#metoo",
-                        n = 1000,
-                        include_rts = FALSE,
-                        `-filter`= "replies",
-                        lang = "da")
+```{r}
+# Create a token for API calls
+# The relevant keys and tokens for members of the study group can be found at our developer portal
+# If you aren't a member of the study group, and wish to reproduce this script you need to have a developer account at twitter
+mytoken <- create_token(
+app = "metoo_denmark", # The name of our 'app'
+consumer_key = "XXXXX", # The API Key
+consumer_secret = "XXXXX", # The secret API key
+access_token = "", # Access token
+access_secret = "XXXXXX" # Secret acces token
+)
+
+# Get tweets
+# Only 991 tweets can live up to my criterion, so We are far from using all our API limit 
+tweets <- search_fullarchive(q = "#metoo place_country:DK", # Get tweets with the hashtag "metoo", that are located in Denmark
+                             n = 5000, # Maximum number of tweets to be returned 
+                             env_name = "metoo", # The name of our developer environment
+                             fromDate = 201001010001, # Timestamp: 2010-01-01 00:01
+                             toDate = 202101010001, # Timestamp: 2021-01-01 00:01
+                             token = mytoken)
 ```
 
 ```{r}
-tweets
+# I need to save the file as an RDS rather than a csv, since csv can't handle multidimensionality (columns with lists)
+saveRDS(tweets, "../data/raw_data/twitter.rds")
 ```
 
-```{r}
-for (i in 1:nrow(tweets)) {
-print(tweets$geo_coords[[i]])
-}
-```
-```{r}
-tweets$place_full_name
-```
-
-```{r}
-locations <- tweets %>% 
-  filter(!is.na(place_full_name)) %>% 
-  count(place_full_name, sort = TRUE)
-
-locations
-```
 
