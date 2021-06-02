@@ -8,3 +8,6 @@ This CSV file contains a calculation about how many sexual assault reports there
 
 ### charged_vs_reported_pct.csv
 This CSV file contains a calculation about how many sexual assault reports results in a charge as a percentage, in each municipality. 
+
+### pop_sqkm.csv
+This CSV file contains a calculation about the population density in each municipality.  
