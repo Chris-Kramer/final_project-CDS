@@ -1,46 +1,38 @@
----
-title: "Cleaning_Rape_pr_capita"
-author: "Emil Buus Thomsen"
-date: "29/5/2021"
-output: html_document
----
 
-#Calculate factor for rape pr. capita
+#Setting the working directory to the src folder, as the script must be run from there.
+#Otherwise will the paths to where the outputs is written not match.
+getwd()
+setwd("src")
 
 
-## Loading packages
-```{r setup, include=FALSE}
+#Loading package
 library(tidyverse)
 
-    ```
 
-## Loading Data
-
-```{r data}
+#Loading data and reading it as dataframes
 popolation_link <- "https://raw.githubusercontent.com/Chris-Kramer/final_project-CDS/main/data/raw_data/pop.csv"
 charged_rape_link <- "https://raw.githubusercontent.com/Chris-Kramer/final_project-CDS/main/data/raw_data/charged_rape.csv"
 reported_rape_link <- "https://raw.githubusercontent.com/Chris-Kramer/final_project-CDS/main/data/raw_data/reported_rape.csv"
 
-
 population <- read_csv2(url(popolation_link))
 charged_rape <- read_csv2(url(charged_rape_link))
 reported_rape <- read_csv2(url(reported_rape_link))
-```
-```{r}
-#Removing the two last columns of the
+
+
+
+
+#Removing the two last columns of population data frame, as this does not contain population data.
 population <- population[1:99, ]
+
+#Removing the columns 2007, 2008 and 2009, as we do not have that data in the population data frame
 reported_rape <- subset(reported_rape, select = -c(`2007`,`2008`, `2009`))
 charged_rape <- subset(charged_rape, select = -c(`2007`,`2008`, `2009`))
 
 
-length(population$kommune)
-
-```
 
 
-## Cleaning reported_rape
 
-```{r}
+
 #Creating empty list to contain the values that should be kept in df's
 match_list <- rep()
 
@@ -80,25 +72,22 @@ rep_rape <- rbind(rep_rape, total_rep)
 
 
 
-rep_rape <- transform(rep_rape,     kommune = as.character(kommune),
-                                    `2010` = as.numeric(`2010`),
-                                    `2011` = as.numeric(`2011`),
-                                    `2012` = as.numeric(`2012`),
-                                    `2013` = as.numeric(`2013`),
-                                    `2014` = as.numeric(`2014`),
-                                    `2015` = as.numeric(`2015`),
-                                    `2016` = as.numeric(`2016`),
-                                    `2017` = as.numeric(`2017`),
-                                    `2018` = as.numeric(`2018`),
-                                    `2019` = as.numeric(`2019`),
-                                    `2020` = as.numeric(`2020`)
-                                    )
-```
+rep_rape <- transform(rep_rape, kommune = as.character(kommune),
+                                `2010` = as.numeric(`2010`),
+                                `2011` = as.numeric(`2011`),
+                                `2012` = as.numeric(`2012`),
+                                `2013` = as.numeric(`2013`),
+                                `2014` = as.numeric(`2014`),
+                                `2015` = as.numeric(`2015`),
+                                `2016` = as.numeric(`2016`),
+                                `2017` = as.numeric(`2017`),
+                                `2018` = as.numeric(`2018`),
+                                `2019` = as.numeric(`2019`),
+                                `2020` = as.numeric(`2020`))
 
 
-## Cleaning charged_rape
 
-```{r}
+
 
 # Resetting match list to be empty again
 match_list <- rep()
@@ -132,34 +121,27 @@ total_char <- prepend(total_char, "total_charged_rapes")
 #rbinding total_charged_rapes to our charged rape dataframe.
 char_rape <- rbind(char_rape, total_char)
 
-###
-###
-###
-#char_rape <- char_rape %>% mutate(as.character(kommune), as.integer(`2010`, `2011`, `2012`, `2013`, `2014`, `2015`, `2016`, `2017`, `2018`, `2019`, `2020`))
-#char_rape <- char_rape[,1:12]
 
 
-char_rape <- transform(char_rape,   kommune = as.character(kommune),
-                                    `2010` = as.numeric(`2010`),
-                                    `2011` = as.numeric(`2011`),
-                                    `2012` = as.numeric(`2012`),
-                                    `2013` = as.numeric(`2013`),
-                                    `2014` = as.numeric(`2014`),
-                                    `2015` = as.numeric(`2015`),
-                                    `2016` = as.numeric(`2016`),
-                                    `2017` = as.numeric(`2017`),
-                                    `2018` = as.numeric(`2018`),
-                                    `2019` = as.numeric(`2019`),
-                                    `2020` = as.numeric(`2020`)
-                                    )
 
-```
+char_rape <- transform(char_rape, kommune = as.character(kommune),
+                                  `2010` = as.numeric(`2010`),
+                                  `2011` = as.numeric(`2011`),
+                                  `2012` = as.numeric(`2012`),
+                                  `2013` = as.numeric(`2013`),
+                                  `2014` = as.numeric(`2014`),
+                                  `2015` = as.numeric(`2015`),
+                                  `2016` = as.numeric(`2016`),
+                                  `2017` = as.numeric(`2017`),
+                                  `2018` = as.numeric(`2018`),
+                                  `2019` = as.numeric(`2019`),
+                                  `2020` = as.numeric(`2020`))
 
 
 
 
 
-```{r}
+
 #Adding a column for the whole country 
 
 #Creating calculating the sum of the population in our population data frame
@@ -173,10 +155,6 @@ population <- rbind(population, total_popu)
 
 
 
-###
-###
-###
-
 population <- transform(population, kommune = as.character(kommune),
                                     `2010` = as.numeric(`2010`),
                                     `2011` = as.numeric(`2011`),
@@ -188,14 +166,14 @@ population <- transform(population, kommune = as.character(kommune),
                                     `2017` = as.numeric(`2017`),
                                     `2018` = as.numeric(`2018`),
                                     `2019` = as.numeric(`2019`),
-                                    `2020` = as.numeric(`2020`)
-                                    )
-write.csv(population, "../data/processed_data/clean_population.csv", row.names = FALSE)
+                                    `2020` = as.numeric(`2020`))
+
+
+#Writing population to csv
+write.csv(population, "../data/processed_data/EMIL_clean_population.csv", row.names = FALSE)
 
 
 
-
-class(rep_rape[,2:12])
 
 # Deviding the rapes by population and multiplies by 10000 to get a factor of rape per person. In order to do this we are dropping the municipality column
 charged_popu <- char_rape[,2:12]/population[,2:12]*10000
@@ -208,23 +186,16 @@ reported_popu <- cbind(Municipalities=c(rep_rape[,1]), reported_popu)
 
 
 
-```
-
-
-```{r}
+#Creating a dataframe containing the procentage of how many rapes was charged out of the reported in procent.
 charged_reported_rape <- char_rape[,2:12]/rep_rape[,2:12]*100
-
 charged_reported_rape <- cbind(Municipalities=c(char_rape[,1]),charged_reported_rape)
 
-```
 
 
-```{r}
+
+#Writing data frame to csv's
+
 write.csv(charged_popu, "../data/processed_data/EMIL_charged_population.csv", row.names = FALSE)
 write.csv(reported_popu, "../data/processed_data/EMIL_reported_popu.csv", row.names = FALSE)
 write.csv(charged_reported_rape, "../data/processed_data/EMIL_charged_reported_rape.csv", row.names = FALSE)
-
-```
-
-
 
