@@ -10,11 +10,11 @@ library(tidyverse)
 
 
 #Loading data and reading it as dataframes
-popolation_link <- "https://raw.githubusercontent.com/Chris-Kramer/final_project-CDS/main/data/raw_data/pop.csv"
+popolation_link <- "https://raw.githubusercontent.com/Chris-Kramer/final_project-CDS/main/data/raw_data/clean_pop.csv"
 charged_rape_link <- "https://raw.githubusercontent.com/Chris-Kramer/final_project-CDS/main/data/raw_data/charged_rape.csv"
 reported_rape_link <- "https://raw.githubusercontent.com/Chris-Kramer/final_project-CDS/main/data/raw_data/reported_rape.csv"
 
-population <- read_csv2(url(popolation_link))
+population <- read_csv(url(popolation_link))
 charged_rape <- read_csv2(url(charged_rape_link))
 reported_rape <- read_csv2(url(reported_rape_link))
 
@@ -37,7 +37,7 @@ charged_rape <- subset(charged_rape, select = -c(`2007`,`2008`, `2009`))
 match_list <- rep()
 
 #runnning through all municipalities in the population data frame.
-for (mun in population$kommune) {
+for (mun in population$Kommune) {
   
   #Returning a list where the number of of the index in population and reported_rape are the same.
   match_list <- c(match_list, match(mun, reported_rape$kommune))
@@ -93,7 +93,7 @@ rep_rape <- transform(rep_rape, kommune = as.character(kommune),
 match_list <- rep()
 
 #runnning through all municipalities in the population data frame.
-for (mun in population$kommune) {
+for (mun in population$Kommune) {
   
   #Returning a list where the number of of the index in population and charged_rape are the same.
   match_list <- c(match_list, match(mun, charged_rape$kommune))
@@ -155,7 +155,7 @@ population <- rbind(population, total_popu)
 
 
 
-population <- transform(population, kommune = as.character(kommune),
+population <- transform(population, Kommune = as.character(Kommune),
                                     `2010` = as.numeric(`2010`),
                                     `2011` = as.numeric(`2011`),
                                     `2012` = as.numeric(`2012`),
@@ -168,9 +168,14 @@ population <- transform(population, kommune = as.character(kommune),
                                     `2019` = as.numeric(`2019`),
                                     `2020` = as.numeric(`2020`))
 
+###
+###    !!! OBS !!!
+###
+###This piece of code is not nessasary (for now)
+
 
 #Writing population to csv
-write.csv(population, "../data/processed_data/EMIL_clean_population.csv", row.names = FALSE)
+#write.csv(population, "../data/raw_data/EMIL_clean_population.csv", row.names = FALSE)
 
 
 
