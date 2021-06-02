@@ -28,3 +28,8 @@ for(i in 1:nrow(df_bars)) {
   lats <- append(lats, lat)
 }
 
+#Create dataframe with longitudes and latitudes
+df <- data.frame(lat = lats,
+                 lon = lons)
+
+write.csv(df, "../data/processed_data/bars_coords.csv", fileEncoding = "UTF-8")
