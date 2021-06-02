@@ -5,6 +5,7 @@ library(tidyverse)
 library(tidytext)
 library(httr)
 library(jsonlite)
+library(tmaptools)
 
 #set working dir
 setwd("src")
@@ -31,7 +32,33 @@ tweets <- search_fullarchive(q = "#metoo place_country:DK", # Get tweets with th
 
 
 # Clean and save file ---------------------------------------------------------------
-tweets <- tweets %>% select(created_at, bbox_coords, place_name, place_full_name, place_type, geo_coords)
+tweets <- tweets %>% select(created_at, bbox_coords, place_name, place_full_name, place_type)
+# Remove place with fitness world (This can't be converted to a geocode)
+tweets <- tweets %>% filter(place_full_name != "Fitness World")
+
+#List of longitudes
+lons <- c()
+#List of latitudes
+lats <- c()
+# Loop through every city and zip code of bars
+for(i in 1:nrow(tweets)) {
+    print(tweets$place_full_name[i])
+  # Get results from the query of geocoding
+  result <- geocode_OSM(q = tweets$place_full_name[i], projection = 4326)
+  # Get the coordinates from the results as a vector
+  coords <- as.vector(result$coords)
+  # Get longitude
+  lon <- coords[1]
+  # Get latitude
+  lat <- coords[2]
+  # Append name, longitude, and latitude to lists
+  lons <- append(lons, lon)
+  lats <- append(lats, lat)
+}
+
+# Add columns of latitude and longitude to dataframe 
+tweets$latitude <- lats
+tweets$longitude <- lons
 
 # I need to save the file as an RDS rather than a csv, since csv can't handle multidimensionality (columns with lists)
 saveRDS(tweets, "../data/raw_data/twitter.rds")

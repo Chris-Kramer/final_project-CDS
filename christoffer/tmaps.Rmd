@@ -57,3 +57,23 @@ tmap_save(density_map, "../output/density_map.html")
 
 ```
 
+```{r}
+
+tweets <- readRDS("../data/raw_data/twitter.rds")
+
+tweets %>% filter(!is.na(geo_coords))
+
+#geo <- tweets %>% filter(!is.na(geo_coords[0))
+
+geo <- tweets$geo_coords
+geo[1][1][1][1]
+
+tweets$place_full_name
+
+geo <- unlist(geo)
+
+filter(is.na(geo) == FALSE)
+geo[440:450]
+```
+
+
