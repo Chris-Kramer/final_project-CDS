@@ -49,9 +49,9 @@ pop_sqm <- merge(pop_data, area_data, by = "Kommune")
 
 pop_sqm %>% filter(Kommune == "Esbjerg")
 #Fix the missing values in Christianø
-pop_sqm[pop_sqm == ".."] <- 0
+#pop_sqm[pop_sqm == ".."] <- 0
 
-  
+# Using mutate twice, since it returns an error, if all columns are mutated at once  
 pop_sqm <- pop_sqm %>% 
   mutate(people_pr_sqm2010 = as.integer(X2010.x) / as.integer(X2010.y)) %>% 
   mutate(people_pr_sqm2011 = as.integer(X2011.x) / as.integer(X2011.y),
@@ -72,7 +72,7 @@ pop_sqm[2:23] = NULL
 pop_sqm %>% filter(Kommune == "Christiansø")
 # We remove the row with Christiansø as there is not enough data for this to work
 pop_sqm <- pop_sqm %>% filter(Kommune != "Christiansø")
-pop_sqm %>% filter(Kommune == "København")
+#pop_sqm %>% filter(Kommune == "København")
 # Create a column with the average density across all years 
 pop_sqm$people_pr_sqm_avg <- as.integer(rowMeans(pop_sqm[3:ncol(pop_sqm)]))
 pop_sqm %>% filter(Kommune == "Esbjerg")
