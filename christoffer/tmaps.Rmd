@@ -10,6 +10,7 @@ output: html_document
 library(tidyverse)
 library(tmap)
 library(sf)
+library(tmaptools)
 setwd("src")
 ```
 
@@ -66,33 +67,48 @@ mun_reported <- st_transform(mun_reported, crs = 4326)
 
 
 ```{r}
-# Create Tmap -------------------------------------------------------------
+#Get name of the year columns (2015-2020)
+year_cols <- colnames(mun_charged)[7:12]
+
+for (year in year_cols) {
+  
 tmap_mode(mode = "view")
-tm_shape(mun_density) +
+# Remove x from year name
+year_name <- str_sub(year, 2, str_length(year))
+# Density layer
+out_map <- tm_shape(mun_density) +
+  tm_layout(title = paste("Sexual assaults in Denmark: ", year_name)) +
   tm_polygons("people_pr_sqkm_avg", style = "quantile",
+              palette = "Greens",
               id = "Kommune",
               title = "Average people pr. sqkm from 2010-2020",
               popup.format = list()) +
-  tm_shape(mun_charged_vs_reported) +
-  tm_polygons("X2017", style = "pretty") +
-    tm_shape(mun_charged) +
-  tm_polygons("X2017", style = "pretty") +
-    tm_shape(mun_reported) +
-  tm_polygons("X2017", style = "pretty")
-#tmap_save(density_map, "../output/density_map.html")
-```
+  
+#Charged contra reported layer
+tm_shape(mun_charged_vs_reported) +
+  tm_polygons("X2017", style = "pretty",
+              palette = "Blues",
+              id = "Municipalities",
+              title = "% of reports that results in charges",
+              popup.format = list()) +
+  
+# Charges layer
+tm_shape(mun_charged) +
+  tm_polygons("X2017", style = "jenks",
+              id = "Municipalities",
+              title = "Charges pr. 10.000 inhabitants",
+              popup.format = list()) +
+# Reports layer 
+tm_shape(mun_reported) +
+  tm_polygons("X2017", style = "jenks",
+              palette = "Reds",
+              id = "Municipalities",
+              title = "Reports pr. 10.000 inhabitants",
+              popup.format = list())
+# Save tmap
+tmap_save(out_map, filename = paste("../output/map_", year_name, ".html"))
 
-```{r}
-if (require(dplyr) && require(tidyr)) {
-	test <- mun_charged_vs_reported %>% 
-		gather(X2010, population, -name, -name_long, -iso_a3, -geometry) %>% 
-		mutate(year = as.integer(substr(year, 4, 7)))
-	
-	tm_shape(metro_long) +
-		tm_bubbles("population") +
-		tm_facets(by = "year")
 }
-
 
 ```
 
