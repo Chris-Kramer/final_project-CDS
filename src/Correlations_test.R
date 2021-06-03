@@ -23,7 +23,7 @@ charged <- charged %>% filter(Municipalities != "total_charged_rapes")
 reported <- reported %>%filter(Municipalities != "Christiansø")
 reported <- reported %>% filter(Municipalities != "total_charged_rapes")
 
-# Charges contra reports
+# Charges vs reports
 charged_reported <- charged_reported %>% filter(Municipalities != "Christiansø")
 charged_reported <- charged_reported %>% filter(Municipalities != "total_charged_rapes")
 
@@ -37,7 +37,7 @@ reported <- reported[order(reported$Municipalities),]
 charged <- charged[order(charged$Municipalities),]
 pop_sq <- pop_sq[order(pop_sq$Kommune),]
 
-# Reset index
+# Reset indexes
 row.names(charged) <- NULL
 row.names(reported) <- NULL
 row.names(charged_reported) <- NULL
