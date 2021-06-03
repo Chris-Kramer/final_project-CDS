@@ -228,3 +228,72 @@ write.csv(charged_reported_rape, "../data/processed_data/EMIL_charged_reported_r
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+## New data project
+
+```{r}
+library(lubridate)
+library(spatstat)
+library(sf)
+
+charges_per_10k <- read.csv("../data/processed_data/charges_per_10k.csv", encoding = "UTF-16")
+
+head(charges_per_10k)
+
+
+#Tæl antal gange der forekommer tweets i forskellige kommuner, under de forskellige år.
+#Gem det i en data frame, der har samme format som charges_per_10k
+
+#Downloading twitter data
+twitter <- readRDS("../data/raw_data/twitter.rds")
+head(twitter)
+
+twitter$created_at <- year(twitter$created_at)
+twitter
+
+unique_years <- unique(twitter$created_at)
+
+
+#Read the municipalities polygons
+municipalities <- readRDS("../data/raw_data/gadm36_DNK_2_sp.rds")
+#Read municipalities as a spatial object
+municipalities <- st_as_sf(municipalities)
+#Give municipaliteis a CRS
+municipalities <- st_transform(municipalities, crs = 4326)
+
+#Clean names
+municipalities$NAME_2[31] <- "Aarhus"
+municipalities$NAME_2[21] <- "Høje-Taastrup"
+municipalities$NAME_2[60] <- "Vesthimmerlands"
+
+twitter_output <- data.frame(municipality = unique(municipalities$NAME_2))
+
+for (year in unique_years) {
+  twitter_year <- twitter %>% filter(created_at == year)
+  
+  twitter_spatial <- st_as_sf(x= twitter_year,
+                           coords = c("longitude", "latitude"),
+                           crs = 4326)
+  
+  twitter_df <- data.frame(municipality = municipalities$NAME_2)
+  year_str <- toString(year)
+  
+  twitter_df[,year_str] <- lengths(st_intersects(municipalities$geometry, twitter_spatial$geometry))
+  
+  twitter_output <- merge(twitter_df, twitter_output,
+                          by = "municipality", )
+  
+}
+```
+
+
