@@ -200,7 +200,7 @@ charged_reported_rape <- cbind(Municipalities=c(char_rape[,1]),charged_reported_
 
 #Writing data frame to csv's
 
-write.csv(charged_popu, "../data/processed_data/charges_per_10k.csv", row.names = FALSE)
-write.csv(reported_popu, "../data/processed_data/reported_per_10k.csv", row.names = FALSE)
-write.csv(charged_reported_rape, "../data/processed_data/charged_vs_reported_pct.csv", row.names = FALSE)
+write.csv(charged_popu, "../data/processed_data/charges_per_10k.csv", fileEncoding = "UTF-8")
+write.csv(reported_popu, "../data/processed_data/reported_per_10k.csv", fileEncoding = "UTF-8")
+write.csv(charged_reported_rape, "../data/processed_data/charged_vs_reported_pct.csv", fileEncoding = "UTF-8")
 

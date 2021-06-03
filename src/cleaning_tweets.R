@@ -66,4 +66,4 @@ twitter_output <- twitter_output[c("municipality", "2012", "2013", "2015", "2016
 
 
 #writing to csv-file
-write.csv(twitter_output, "../data/processed_data/tweets_per_municipality.csv")
+write.csv(twitter_output, "../data/processed_data/tweets_per_municipality.csv", fileEncoding = "UTF-8")
