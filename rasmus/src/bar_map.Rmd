@@ -74,10 +74,13 @@ municipalities_and_bars$Municipality
 
 
 ```{r}
-population <- read.csv("../../data/processed_data/clean_population.csv", encoding = "UTF-16")
+getwd()
+setwd()
+
+population <- read.csv("../../data/raw_data/clean_pop.csv", encoding = "UTF-8")
 
 population <- population %>% 
-  rename(Municipality = kommune)
+  rename(Municipality = Kommune)
 population
 
 population <- population[order(population$Municipality),]
