@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(sf)
 library(spatstat)
+library(tmap)
 
 ```
 
@@ -76,15 +77,34 @@ assaults <- assaults %>%
 assaults <- merge(assaults, municipalities, by.x = "Municipalities",
                                             by.y = "NAME_2")
 
-assaults <- merge(assaults, charged_vs_reported_pct, by = "Municipalities")
+#assaults <- merge(assaults, charged_vs_reported_pct, by = "Municipalities")
+
+#Remove the X that is in front of years
+#assaults <- assaults %>%
+  #mutate(year = str_remove(year, "X"))
+
+#Convert string to int in year
+#assaults <- assaults %>%
+  #mutate(year = as.numeric(year))
+```
+
+
+
+```{r}
+assaults <- left_join(assaults, charged_vs_reported_pct, by.x = "Municipalities", by.y = "Municipalities")
 
 #Remove the X that is in front of years
 assaults <- assaults %>%
-  mutate(year = str_remove(year.x, ".x"))
+  mutate(year = str_remove(year, "X"))
 
 #Convert string to int in year
 assaults <- assaults %>%
   mutate(year = as.numeric(year))
+
+assaults <- subset(assaults, select = c(Municipalities, year, reported,  charged, repo_vs_char_pct, population, geometry))
+
+#Transforming all Na's to 100 procent as we have devided reported = 0 with 0 which returns a Na result. We  interpret this as there have been no reports or charges which equals a 100% of all reports to have been charged.
+ assaults$repo_vs_char_pct[is.na(assaults$repo_vs_char_pct)] <- 100
 ```
 
 
@@ -100,15 +120,80 @@ assaults <- st_transform(assaults, crs = 32632)
 
 
 ```{r}
-assaults_2017 <- 
-  assaults %>% 
+unique_years = unique(assaults$year)
+
+for (year in unique_years) {
+  assaults_year <- assaults %>% 
+    filter(year == year)
+  
+  assaults_year <- st_cast(st_simplify(assaults_year, dTolerance = 250), to = "MULTIPOLYGON")
+
+  #Find neighbours based on queen movement
+  nb <- poly2nb(assaults_year$geometry)
+
+  #Get center of each municipality
+  centers <- st_coordinates(st_centroid(assaults_year$geometry))
+  
+  
+  
+  # Run a Moran on reported cases (as a ratio)
+  reported_moran_test <- moran.test(assaults_year$reported, nb2listw(nb, style = "W", zero.policy = TRUE), zero.policy = TRUE)
+  
+  #Run a monte carlo simulation on reported cases (as a ratio)
+  reported_mc <- moran.mc(assaults_year$reported, nb2listw(nb, zero.policy = TRUE), zero.policy = TRUE, 
+      nsim = 999)
+  
+  write(paste0("Autocorrelation for the year", year), file = "../output/reported_autocorrelation.txt", append = TRUE)
+  write(toString(reported_moran_test), file = "../output/reported_autocorrelation.txt", append = TRUE)
+  write(toString(reported_mc), file = "../output/reported_autocorrelation.txt", append = TRUE)
+  write("\n", file = "../output/reported_autocorrelation.txt", append = TRUE)
+  
+  
+  
+  
+  
+  # Run a Moran on reported cases (as a ratio)
+  charged_moran_test <- moran.test(assaults_year$charged, nb2listw(nb, style = "W", zero.policy = TRUE), zero.policy = TRUE)
+  
+  #Run a monte carlo simulation on reported cases (as a ratio)
+  charged_mc <- moran.mc(assaults_year$charged, nb2listw(nb, zero.policy = TRUE), zero.policy = TRUE, 
+      nsim = 999)
+  
+  write(paste0("Autocorrelation for the year", year), file = "../output/charged_autocorrelation.txt", append = TRUE)
+  write(toString(charged_moran_test), file = "../output/charged_autocorrelation.txt", append = TRUE)
+  write(toString(charged_mc), file = "../output/charged_autocorrelation.txt", append = TRUE)
+  write("\n", file = "../output/charged_autocorrelation.txt", append = TRUE)
+  
+  
+  
+  
+  # Run a Moran on reported cases (as a ratio)
+  reported_vs_charged_moran_test <-  moran.test(assaults_year$repo_vs_char_pct, nb2listw(nb, style = "W", zero.policy = TRUE), zero.policy = TRUE)
+  
+  #Run a monte carlo simulation on reported cases (as a ratio)
+  reported_vs_charged_mc <- moran.mc(assaults_year$repo_vs_char_pct, nb2listw(nb, zero.policy = TRUE), zero.policy = TRUE, 
+      nsim = 999)
+  
+  write(paste0("Autocorrelation for the year ", year), file = "../output/reported_vs_charged_autocorrelation.txt", append = TRUE)
+  write(toString(reported_vs_charged_moran_test), file = "../output/reported_vs_charged_autocorrelation.txt", append = TRUE)
+  write(toString(reported_vs_charged_mc), file = "../output/reported_vs_charged_autocorrelation.txt", append = TRUE)
+  write("\n", file = "../output/reported_vs_charged_autocorrelation.txt", append = TRUE)
+}
+
+
+
+```
+
+
+
+```{r}
+assaults_2017 <- assaults %>% 
   filter(year == 2017)
 
 #Plot rapes in 2017 as a 
 tmap_mode(mode = "view")
-
-
 ```
+
 
 ## Map of reported rapes
 
@@ -131,9 +216,18 @@ tm_shape(assaults_2017) +
 ```
 
 
+```{r}
+tm_shape(assaults_2017) +
+ tm_polygons("repo_vs_char_pct", style = "quantile",
+             id = "Municipalities",
+             title = "Sexual assault reported cases vs. charged i % inhabitants (2017)")
+```
+
+
 ## Auto correlation test
 
 ```{r}
+options(scipen = 999)
 library(spdep)
 #Simplify spatial object
 assaults_2017 <- st_cast(st_simplify(assaults_2017, dTolerance = 250), to = "MULTIPOLYGON")
@@ -145,6 +239,9 @@ nb <- poly2nb(assaults_2017$geometry)
 centers <- st_coordinates(st_centroid(assaults_2017$geometry))
 ```
 
+
+## Reported
+
 ```{r}
 # Run a Moran on reported cases (as a ratio)
 moran.test(assaults_2017$reported, nb2listw(nb, style = "W", zero.policy = TRUE), zero.policy = TRUE)
@@ -155,5 +252,33 @@ moran.test(assaults_2017$reported, nb2listw(nb, style = "W", zero.policy = TRUE)
 moran.mc(assaults_2017$reported, nb2listw(nb, zero.policy = TRUE), zero.policy = TRUE, 
     nsim = 999)
 ```
+## Charged
+
+```{r}
+# Run a Moran on reported cases (as a ratio)
+moran.test(assaults_2017$charged, nb2listw(nb, style = "W", zero.policy = TRUE), zero.policy = TRUE)
+```
+
+
+
+```{r}
+#Run a monte carlo simulation on reported cases (as a ratio)
+moran.mc(assaults_2017$charged, nb2listw(nb, zero.policy = TRUE), zero.policy = TRUE, 
+    nsim = 999)
+```
+
+## Reported vs. charged
+
+```{r}
+# Run a Moran on reported cases (as a ratio)
+moran.test(assaults_2017$repo_vs_char_pct, nb2listw(nb, style = "W", zero.policy = TRUE), zero.policy = TRUE)
+```
+
+```{r}
+#Run a monte carlo simulation on reported cases (as a ratio)
+moran.mc(assaults_2017$repo_vs_char_pct, nb2listw(nb, zero.policy = TRUE), zero.policy = TRUE, 
+    nsim = 999)
+```
+
 
 
