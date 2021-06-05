@@ -119,7 +119,10 @@ assaults <- st_transform(assaults, crs = 32632)
 
 
 
+
 ```{r}
+
+library(spdep)
 unique_years = unique(assaults$year)
 
 for (year in unique_years) {
