@@ -11,6 +11,7 @@ library(tidyverse)
 library(sf)
 library(spatstat)
 library(tmap)
+library(spdep)
 
 ```
 
@@ -122,8 +123,88 @@ assaults <- st_transform(assaults, crs = 32632)
 
 ```{r}
 
-library(spdep)
+#Selecting unique years
 unique_years = unique(assaults$year)
+#sorting the list of unique years
+unique_years <- sort(unique_years)
+
+autocorrelation <- function(column) {
+  
+  for (year in unique_years) {
+    assaults_year <- assaults %>% 
+      filter(year == year)
+    
+    assaults_year <- st_cast(st_simplify(assaults_year, dTolerance = 250), to = "MULTIPOLYGON")
+    
+    #Find neighbours based on queen movement
+    nb <- poly2nb(assaults_year$geometry)
+    
+    #Get center of each municipality
+    centers <- st_coordinates(st_centroid(assaults_year$geometry))
+      
+      
+      
+    # Run a Moran on reported cases (as a ratio)
+    moran_test <- moran.test(column, nb2listw(nb, style = "W", zero.policy = TRUE), zero.policy = TRUE)
+      
+    #Run a monte carlo simulation on reported cases (as a ratio)
+    monte_carlo <- moran.mc(column, nb2listw(nb, zero.policy = TRUE), zero.policy = TRUE, nsim = 999)
+      
+    print(paste0("Autocorrelation for the year ", year))
+    print(moran_test)
+    print(monte_carlo)
+    print("\n")
+  
+  }
+  
+}
+
+autocorrelation(assaults_year$reported)
+autocorrelation(assaults_year$charged)
+autocorrelation(assaults_year$repo_vs_char_pct)
+
+
+```
+
+
+```{r}
+for (year in unique_years) {
+  assaults_year <- assaults %>% 
+    filter(year == year)
+    
+  assaults_year <- st_cast(st_simplify(assaults_year, dTolerance = 250), to = "MULTIPOLYGON")
+  
+  #Find neighbours based on queen movement
+  nb <- poly2nb(assaults_year$geometry)
+  
+  #Get center of each municipality
+  centers <- st_coordinates(st_centroid(assaults_year$geometry))
+    
+    
+    
+  # Run a Moran on reported cases (as a ratio)
+  charged_moran_test <- moran.test(assaults_year$charged, nb2listw(nb, style = "W", zero.policy = TRUE), zero.policy = TRUE)
+  
+  #Run a monte carlo simulation on reported cases (as a ratio)
+  charged_mc <- moran.mc(assaults_year$charged, nb2listw(nb, zero.policy = TRUE), zero.policy = TRUE, 
+      nsim = 999)
+  
+  print(paste0("Autocorrelation for the year", year), file = "../output/charged_autocorrelation.txt", append = TRUE)
+  print(toString(charged_moran_test), file = "../output/charged_autocorrelation.txt", append = TRUE)
+  print(toString(charged_mc), file = "../output/charged_autocorrelation.txt", append = TRUE)
+  print("\n", file = "../output/charged_autocorrelation.txt", append = TRUE)
+  
+  }
+
+
+```
+
+
+
+
+
+
+```{r}
 
 for (year in unique_years) {
   assaults_year <- assaults %>% 
