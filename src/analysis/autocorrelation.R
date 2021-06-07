@@ -5,7 +5,6 @@ library(tidyverse)
 library(spdep)
 library(sf)
 library(tmaptools)
-library(lubridate)
 
 # Read and clean data -----------------------------------------------------
 # Read data with population density
@@ -63,7 +62,7 @@ mun_reported <- gather(mun_reported, year, val, X2010:X2020)
 
 
 # function for making a monte carlo simulation ----------------------------
-run_mc_test <- function(df, year_val){
+run_mc_test <- function(df, year_val, data_test){
   # Get relevant columns
   df <- df %>% select(Municipalities, year, val)
   # Filter based on year
@@ -77,14 +76,14 @@ run_mc_test <- function(df, year_val){
   nb <- poly2nb(df$geometry)
   #Get center of each municipality
   centers <- st_coordinates(st_centroid(df$geometry))
-  n_sims <- 999 #This is saved in a variable for printing
   res <- moran.mc(df$val, nb2listw(nb, zero.policy = TRUE), zero.policy = TRUE, 
-           nsim = n_sims)
+           nsim = 999)
   
   year_val <- str_remove(year_val, "X")
   df_res <- data.frame(p_val = as.double(res$p.value),
-                      statistic =as.double(res$statistic),
-                      year = as.integer(year_val))
+                      moran_pattern =as.double(res$statistic),
+                      year = as.integer(year_val),
+                      description = as.character(data_test))
   return(df_res)
 }
 
@@ -92,53 +91,60 @@ run_mc_test <- function(df, year_val){
 years <- unique(mun_charged_vs_reported$year)
 # Loop through all years and perform autocorrelation ----------------------
 # Autocorrelation on reports that leads to charges in a municipality
-results <- data.frame(p_val = double(), statistic = double(), year = integer())
+res_charged_reported <- data.frame(p_val = double(), moran_pattern = double(), year = integer(), description = character())
 for(year in years) {
-  res <- run_mc_test(mun_charged_vs_reported, year)
-  results <-rbind(results, res)
+  row <- run_mc_test(mun_charged_vs_reported, year, "Charges that leads to reports")
+  res_charged_reported <-rbind(res_charged_reported, row)
 }
-results #Print out results
 print("Results from autocorrelation on reports that leads to charges ...")
+res_charged_reported #Print out results
 
 # Plot and save results
 pdf("../../output/plot_reports_vs_charges_moran.pdf")
-plot(results$year, results$p_val, xlab = "Year", ylab = "Value", type = "b", col = "red", main = "Monte carlo simulation of Reports that leads to a charge")
-lines(results$year, results$statistic, type = "b", col = "blue")
+plot(res_charged_reported$year, res_charged_reported$p_val, xlab = "Year", ylab = "Value",
+     type = "b", col = "red", main = "Monte carlo simulation of Reports that leads to a charge")
+lines(res_charged_reported$year, res_charged_reported$moran_pattern, type = "b", col = "blue")
 legend("topleft", legend = c("P-value", "Result from moran test"), col =c("red", "blue"), lty = 1:2, cex = 0.8)
 dev.off()
 
-results <- data.frame(p_val = double(), statistic = double(), year = integer())
+res_reports <- data.frame(p_val = double(), moran_pattern = double(), year = integer(), description = character())
 #Reports in a municipality
 for(year in years){
-  res <- run_mc_test(mun_reported, year)
-  results <-rbind(results, res)
+  row <- run_mc_test(mun_reported, year, "Reports in municipalities")
+  res_reports <-rbind(res_reports, row)
 }
 print("Results from autocorrelation on reports in municipalities...")
-results #Print out results
+res_reports #Print out results
 
 #Plot and save results
 pdf("../../output/plot_reports_moran.pdf")
-plot(results$year, results$p_val, xlab = "Year", ylab = "Value", type = "b", col = "red", main = "Monte carlo simulation of Reports")
-lines(results$year, results$statistic, type = "b", col = "blue")
-legend("topleft", legend = c("P-value", "Result from moran test"), col =c("red", "blue"), lty = 1:2, cex = 0.8)
+plot(res_reports$year, res_reports$p_val, xlab = "Year", ylab = "Value",
+     type = "b", col = "red", main = "Monte carlo simulation of Reports")
+lines(res_reports$year, res_reports$moran_pattern, type = "b", col = "blue")
+legend("topleft", legend = c("P-value", "Result from moran test"), col =c("red", "blue"), lty = 1, cex = 0.8)
 dev.off()
 
 
 # Create empty df for results
-results <- data.frame(p_val = double(), statistic = double(), year = integer())
+res_charged <- data.frame(p_val = double(), moran_pattern = double(), year = integer(), description = character())
 # Charges in a municipality
 for (year in years) {
-  res <- run_mc_test(mun_charged, year)
-  results <-rbind(results, res)
+  row <- run_mc_test(mun_charged, year, "Charges in municipalities")
+  res_charged <-rbind(res_charged, row)
 }
 print("Results from autocorrelation on charges in municipalities ...")
-results #Print out results
+res_charged #Print out results
 
 #Plot and save results
 pdf("../../output/plot_charges_moran.pdf")
-plot(results$year, results$p_val, xlab = "Year", ylab = "Value", type = "b", col = "red", main = "Monte carlo simulation of charges")
-lines(results$year, results$statistic, type = "b", col = "blue")
-legend("topleft", legend = c("P-value", "Result from moran test"), col =c("red", "blue"), lty = 1:2, cex = 0.8)
+plot(res_charged$year, res_charged$p_val, xlab = "Year", ylab = "Value",
+     type = "b", col = "red", main = "Monte carlo simulation of charges")
+lines(res_charged$year, res_charged$moran_pattern, type = "b", col = "blue")
+legend("topleft", legend = c("P-value", "Result from moran test"), col =c("red", "blue"), lty = 1, cex = 0.8)
 dev.off()
 
+# Merge dataframes and save a csv-file with output
+output_csv <- rbind(res_charged, res_reports)
+output_csv <- rbind(output_csv, res_charged_reported)
 
+write.csv(output_csv, "../../output/results_mc_moran.csv")
