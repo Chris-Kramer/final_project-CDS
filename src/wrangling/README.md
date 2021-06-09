@@ -11,7 +11,7 @@ Run the scripts in this order, to create the nessasary data:
 ## twitter_scraping.R
 This script cannot be run unless you have a developer acount.  
 It produces the following output:
-- twitter.rds
+- twitter.rds  
 This can be found in the raw_data folder
 
 ## 1_cleaning_rape_per_capita.R
