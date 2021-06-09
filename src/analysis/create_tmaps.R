@@ -107,6 +107,6 @@ for (year in year_cols) {
                 title = "Tweets with hashtage #metoo in muncipality",
                 popup.format = list())
   # Save tmap
-  tmap_save(out_map, filename = paste("../../output/map_", year_name, ".html"))
+  tmap_save(out_map, filename = paste("../../output/map_", year_name, ".html", sep = ""))
   i <- i + 1
 }
