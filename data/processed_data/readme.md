@@ -1,13 +1,16 @@
-## Processed data
+# Metadata
+## Charged vs reported cases (twitter.rds)  
+**Creation date:** 02-06-2021 (DD-MM-YYYY)
+**Authors:** 
+### Description
+This data set contains the number of reported cases, that resulted in charges written as percent. 
 
-### charges_pr_10k.csv
-This CSV file contains a calculation about how many sexual assault charges there are pr. 10.000 inhabitants in each municipality.
+### Creation
+The data set was generated from the cleaned versions of the crime data sets. We simply calculated a factor in percent for all cells the following way:  
 
-### reported_pr_10k.csv
-This CSV file contains a calculation about how many sexual assault reports there are pr. 10.000 inhabitants in each municipality
+                        _Charged_cases/reported_cases*100_
 
-### charged_vs_reported_pct.csv
-This CSV file contains a calculation about how many sexual assault reports results in a charge as a percentage, in each municipality. 
+This csv-file is created
 
-### pop_sqkm.csv
-This CSV file contains a calculation about the population density in each municipality.  
+### Usage
+This data was used to perform correlation to test if there is any correlation between how many percentages of reports that leads to charges and the population density or twitter usage in a municipality. It was also used to perform spatial autocorrelation and to create interactive maps.
