@@ -12,9 +12,9 @@ This repository contains all relevant scripts, output, and data for our final pr
   - **processed_data:** Data which has been processed. This is the data that is used in the analysis. See the readme file in the folder for metadata. 
 - **misc:** Code and experiments which have been excluded from the project. Most of it doesn't work.  
 - **output:** Output from the analysis. It contains a mixture of CSV files with results and interactive maps. See the readme file in the folder for metadata.   
-- **src:** R scripts that are used in this project. It contains two subfolders. See readme file in the folder for information about how to run the scripts, and to learn more about what output they produce.   
-  - **analysis:** The scripts which are used to analyze the data.
-  - **wrangling:** The scripts which are used to process the data so it can be used in the analysis.  
+- **src:** R scripts that are used in this project. It contains two subfolders. See readme file in this folder for information about how to run the scripts.   
+  - **analysis:** The scripts which are used to analyze the data. See the readme file in the folder for the output.  
+  - **wrangling:** The scripts which are used to process the data so it can be used in the analysis. See the readme file in the folder for the output
 
 ## Software
 This project was produced in Rstudio with the following versions:  
