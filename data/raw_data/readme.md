@@ -61,12 +61,31 @@ This dataset has been used along with the population dataset to calculate a fact
 - etc. ...  
 - **2021:** The municipality area in square kilometers in 2021.    
 
-### Data on sexual assaults charges (charged_rape.csv) 
+## Data on sexual assaults charges (charged_rape.csv) 
 ### Source
 Danmarks Statistik, https://www.statistikbanken.dk/STRAF22 (choose all municipalities, rape, charges, and all years, to get similar data). This data contains information about how many charges of sexual assault there was in each municipality from 2007-2021.  
 ### Cleaning
 This datasets was downloaded as an excel file, and was then cleaned and converted to a csv-file.  
 ### Usage
-The two data set has been used to calculate new how many reported rapes there where in each municipality per 10.000 citizens distributed in the different municipalities. Furthermore, did we create a third data set containing how many of reported rapes ended in a charge in precent, per municipality.  
+The two data set has been used to calculate how many reported rapes there where in each municipality per 10.000 citizens distributed in the different municipalities. Furthermore, did we create a third data set containing how many of reported rapes ended in a charge in precent, per municipality.  
 ### Columns  
+- **Kommune:** The municipality.  
+- **2010:** The number of charges in the municipality in 2010.  
+- **2011:** The number of charges in the municipality in 2011. 
+- etc. ...  
+- **2021:** The number of charges in the municipality in 2020.
+
+## Data on sexual assaults reports (reported_rape.csv) 
+### Source
+Danmarks Statistik, https://www.statistikbanken.dk/STRAF22 (choose all municipalities, rape, reports, and all years, to get similar data). This data contains information about how many police reports of sexual assaults there was in each municipality from 2007-2021.  
+### Cleaning
+This datasets was downloaded as an excel file, and was then cleaned and converted to a csv-file.  
+### Usage
+The two data set has been used to calculate how many reported rapes there where in each municipality per 10.000 citizens distributed in the different municipalities. Furthermore, did we create a third data set containing how many of reported rapes ended in a charge in precent, per municipality.  
+### Columns  
+- **Kommune:** The municipality.  
+- **2010:** The number of charges in the municipality in 2010.  
+- **2011:** The number of charges in the municipality in 2011. 
+- etc. ...  
+- **2021:** The number of charges in the municipality in 2020.     
 
