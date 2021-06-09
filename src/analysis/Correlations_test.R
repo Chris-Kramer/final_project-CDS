@@ -71,7 +71,7 @@ calc_correlations <- function(start_col = 3, x_data, y_data, x_string, y_string)
     row <- data.frame("p-val" = as.double(result$p.value),
                       "correlation_coefficient" = as.double(result$estimate),
                       "year" = as.integer(year),
-                      "description" = "corrlations between", x_string, "and", y_string,  "in Year")
+                      "description" = paste("corrlations between", x_string, "and", y_string, "in Year"))
     df <- rbind(df, row)
   }
   return(df)
