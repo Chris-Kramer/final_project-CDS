@@ -99,14 +99,6 @@ for(year in years) {
 print("Results from autocorrelation on reports that leads to charges ...")
 res_charged_reported #Print out results
 
-# Plot and save results
-pdf("../../output/plot_reports_vs_charges_moran.pdf")
-plot(res_charged_reported$year, res_charged_reported$p_val, xlab = "Year", ylab = "Value",
-     type = "b", col = "red", main = "Monte carlo simulation of Reports that leads to a charge")
-lines(res_charged_reported$year, res_charged_reported$moran_pattern, type = "b", col = "blue")
-legend("topleft", legend = c("P-value", "Result from moran test"), col =c("red", "blue"), lty = 1:2, cex = 0.8)
-dev.off()
-
 res_reports <- data.frame(p_val = double(), moran_pattern = double(), year = integer(), description = character())
 #Reports in a municipality
 for(year in years){
@@ -115,15 +107,6 @@ for(year in years){
 }
 print("Results from autocorrelation on reports in municipalities...")
 res_reports #Print out results
-
-#Plot and save results
-pdf("../../output/plot_reports_moran.pdf")
-plot(res_reports$year, res_reports$p_val, xlab = "Year", ylab = "Value",
-     type = "b", col = "red", main = "Monte carlo simulation of Reports")
-lines(res_reports$year, res_reports$moran_pattern, type = "b", col = "blue")
-legend("topleft", legend = c("P-value", "Result from moran test"), col =c("red", "blue"), lty = 1, cex = 0.8)
-dev.off()
-
 
 # Create empty df for results
 res_charged <- data.frame(p_val = double(), moran_pattern = double(), year = integer(), description = character())
@@ -134,14 +117,6 @@ for (year in years) {
 }
 print("Results from autocorrelation on charges in municipalities ...")
 res_charged #Print out results
-
-#Plot and save results
-pdf("../../output/plot_charges_moran.pdf")
-plot(res_charged$year, res_charged$p_val, xlab = "Year", ylab = "Value",
-     type = "b", col = "red", main = "Monte carlo simulation of charges")
-lines(res_charged$year, res_charged$moran_pattern, type = "b", col = "blue")
-legend("topleft", legend = c("P-value", "Result from moran test"), col =c("red", "blue"), lty = 1, cex = 0.8)
-dev.off()
 
 # Merge dataframes and save a csv-file with output
 output_csv <- rbind(res_charged, res_reports)
