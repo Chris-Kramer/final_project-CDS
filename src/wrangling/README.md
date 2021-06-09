@@ -17,6 +17,7 @@ This script creates the following outputs:
 - charges_per_10k.csv
 - reported_per_10k.csv
 - processed_data/charged_vs_reported_pct.csv
+
 and can be found in the prossed_data folder.
 
 
@@ -24,6 +25,7 @@ and can be found in the prossed_data folder.
 ## 2_pop_density_area.R
 This script creates the following output:
 - pop_sqkm.csv
+
 and can be found in the processed_data folder.
 
 
@@ -31,4 +33,5 @@ and can be found in the processed_data folder.
 ## 3_cleaning_tweets.R
 This script creates the following output:
 - tweets_per_municipality.csv
+
 and can be found in the processed_data folder.
